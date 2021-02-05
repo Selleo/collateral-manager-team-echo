@@ -11,6 +11,7 @@ gem "autoprefixer-rails"
 gem "bootsnap", require: false
 gem 'bourbon', '>= 6.0.0'
 gem 'delayed_job_active_record'
+gem 'devise'
 gem 'inline_svg'
 gem 'high_voltage'
 gem 'oj'
