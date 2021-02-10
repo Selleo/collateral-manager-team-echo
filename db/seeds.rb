@@ -5,4 +5,13 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
-user = User.create! :email => 'admin@admin.com', :password => 'Admin123', :password_confirmation => 'Admin123'
+User.create! email: 'admin@admin.com', password: 'Admin123', password_confirmation: 'Admin123'
+Tag.create! name: 'ruby', category: 0
+Tag.create! name: 'en', category: 2
+Tag.create! name: 'crm', category: 1
+Tag.create! name: 'rails', category: 0
+Tag.create! name: 'recruitment', category: 1
+collateral = Collateral.create! name: 'Ruby is awesome!', link: 'http://blog.selleo.com/ruby-roxxx', kind: 2
+Tag.first(5).each do |tag|
+  collateral.tags << tag
+end

@@ -21,8 +21,6 @@ ActiveRecord::Schema.define(version: 2021_02_10_180038) do
     t.integer "kind"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.bigint "tag_id"
-    t.index ["tag_id"], name: "index_collaterals_on_tag_id"
   end
 
   create_table "collaterals_tags", id: false, force: :cascade do |t|
