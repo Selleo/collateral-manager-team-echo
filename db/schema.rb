@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_10_162036) do
+ActiveRecord::Schema.define(version: 2021_02_10_180038) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -21,6 +21,15 @@ ActiveRecord::Schema.define(version: 2021_02_10_162036) do
     t.integer "kind"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.bigint "tag_id"
+    t.index ["tag_id"], name: "index_collaterals_on_tag_id"
+  end
+
+  create_table "collaterals_tags", id: false, force: :cascade do |t|
+    t.bigint "tag_id"
+    t.bigint "collateral_id"
+    t.index ["collateral_id"], name: "index_collaterals_tags_on_collateral_id"
+    t.index ["tag_id"], name: "index_collaterals_tags_on_tag_id"
   end
 
   create_table "delayed_jobs", force: :cascade do |t|
@@ -36,6 +45,11 @@ ActiveRecord::Schema.define(version: 2021_02_10_162036) do
     t.datetime "created_at", precision: 6
     t.datetime "updated_at", precision: 6
     t.index ["priority", "run_at"], name: "delayed_jobs_priority"
+  end
+
+  create_table "tags", force: :cascade do |t|
+    t.string "name"
+    t.integer "category"
   end
 
   create_table "users", force: :cascade do |t|
