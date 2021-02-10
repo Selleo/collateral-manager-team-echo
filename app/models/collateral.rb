@@ -1,0 +1,2 @@
+class Collateral < ApplicationRecord
+end
