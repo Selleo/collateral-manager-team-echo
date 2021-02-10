@@ -1,6 +1,6 @@
 class CollateralsController < ApplicationController
   before_action :set_collateral, only: [:show, :edit, :update, :destroy]
-
+  before_action :authenticate_user!
   # GET /collaterals
   def index
     @collaterals = Collateral.all
