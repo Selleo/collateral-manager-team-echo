@@ -18,7 +18,7 @@ ActiveRecord::Schema.define(version: 2021_02_10_162036) do
   create_table "collaterals", force: :cascade do |t|
     t.string "name"
     t.string "link"
-    t.string "kind"
+    t.integer "kind"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
