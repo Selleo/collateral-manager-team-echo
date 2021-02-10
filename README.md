@@ -65,3 +65,8 @@ The [rack-mini-profiler] gem can be enabled by setting
 badge on every page.
 
 [rack-mini-profiler]: https://github.com/MiniProfiler/rack-mini-profiler
+
+## Database Setup
+Use `rake db:seed` to initialize database with default user  
+E-mail: `admin@admin.com`  
+Password: `Admin123`
