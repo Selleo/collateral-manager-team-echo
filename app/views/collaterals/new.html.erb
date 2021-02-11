@@ -1,5 +1,10 @@
 <h1>New Collateral</h1>
 
-<%= render 'form', collateral: @collateral %>
+<%= simple_form_for @collateral do |f| %>
+  <%= f.input :name %>
+  <%= f.input :link %>
+  <%= f.input :kind, collection: Collateral.kinds.to_a.map{|c| [c[0].titleize, c[0]]} %>
+  <%= f.button :submit %>
+<% end %>
 
 <%= link_to 'Back', collaterals_path %>

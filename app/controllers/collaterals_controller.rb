@@ -3,7 +3,7 @@ class CollateralsController < ApplicationController
   before_action :authenticate_user!
   # GET /collaterals
   def index
-    @collaterals = Collateral.all
+    @collaterals = Collateral.includes(:tags).all
   end
 
   # GET /collaterals/1
@@ -13,6 +13,34 @@ class CollateralsController < ApplicationController
   # GET /collaterals/new
   def new
     @collateral = Collateral.new
+  end
+
+  # GET /collaterals/1/tags
+  def tags
+    @collateral = Collateral.includes(:tags).find params["collateral_id"]
+    @tags = Tag.all
+    @tag_to_add = Tag.new
+  end
+
+  def assign_tags
+    tag_params = params['tag']
+    tag_to_assign = Tag.where(name: tag_params['name'].downcase, category: tag_params['category']).first_or_create
+    current_collateral = Collateral.includes(:tags).find params['collateral_id']
+
+    unless current_collateral.tags.include?(tag_to_assign)
+      current_collateral.tags << tag_to_assign
+    end
+
+    redirect_to collateral_tags_url
+  end
+
+  def deassign_tag
+    tag_to_remove = params['tag']
+    collateral = Collateral.includes(:tags).find params["collateral_id"]
+    collateral.tags = collateral.tags.where.not(id: tag_to_remove)
+
+    redirect_to collateral_tags_url
+
   end
 
   # GET /collaterals/1/edit
@@ -46,13 +74,14 @@ class CollateralsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_collateral
-      @collateral = Collateral.find(params[:id])
-    end
 
-    # Only allow a trusted parameter "white list" through.
-    def collateral_params
-      params.require(:collateral).permit(:name, :link, :kind)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_collateral
+    @collateral = Collateral.find(params[:id])
+  end
+
+  # Only allow a trusted parameter "white list" through.
+  def collateral_params
+    params.require(:collateral).permit(:name, :link, :kind)
+  end
 end

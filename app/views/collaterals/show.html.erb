@@ -15,5 +15,6 @@
   <%= @collateral.kind %>
 </p>
 
+<%= link_to 'Tags', collateral_tags_path(@collateral) %>
 <%= link_to 'Edit', edit_collateral_path(@collateral) %> |
 <%= link_to 'Back', collaterals_path %>

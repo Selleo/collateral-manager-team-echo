@@ -4,4 +4,34 @@
 
 @import "bourbon";
 
+@import "bootstrap";
+
 @import "base/base";
+
+.tags{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+}
+
+.tag{
+  border: 2px solid black;
+  padding: 8px;
+  border-top-right-radius: 10px 25px;
+  border-bottom-right-radius: 10px 25px;
+  border-top-left-radius: 60px 30px;
+  border-bottom-left-radius: 60px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  &__remove-btn{
+    display: inline;
+    background: transparent;
+    color: black;
+
+    &:hover{
+      background-color: transparent;
+    }
+  }
+}

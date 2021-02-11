@@ -9,6 +9,7 @@ ruby "2.7.2"
 
 gem "autoprefixer-rails"
 gem "bootsnap", require: false
+gem 'bootstrap', '~> 5.0.0.beta1'
 gem 'bourbon', '>= 6.0.0'
 gem 'delayed_job_active_record'
 gem 'devise'

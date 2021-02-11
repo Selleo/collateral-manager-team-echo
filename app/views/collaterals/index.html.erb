@@ -4,25 +4,30 @@
 
 <table>
   <thead>
-    <tr>
-      <th>Name</th>
-      <th>Link</th>
-      <th>Kind</th>
-      <th colspan="3"></th>
-    </tr>
+  <tr>
+    <th>Name</th>
+    <th>Link</th>
+    <th>Kind</th>
+    <th>Tags</th>
+    <th colspan="3"></th>
+  </tr>
   </thead>
 
   <tbody>
-    <% @collaterals.each do |collateral| %>
-      <tr>
-        <td><%= collateral.name %></td>
-        <td><%= collateral.link %></td>
-        <td><%= collateral.kind %></td>
-        <td><%= link_to 'Show', collateral %></td>
-        <td><%= link_to 'Edit', edit_collateral_path(collateral) %></td>
-        <td><%= link_to 'Destroy', collateral, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-      </tr>
-    <% end %>
+  <% @collaterals.each do |collateral| %>
+    <tr>
+      <td><%= collateral.name %></td>
+      <td><%= collateral.link %></td>
+      <td><%= collateral.kind.titleize %></td>
+      <td><% collateral.tags.each do |tag| %>
+          <span class="badge bg-info text-dark"><%= tag.name %></span>
+        <%end %>
+          </td>
+      <td><%= link_to 'Show', collateral %></td>
+      <td><%= link_to 'Edit', edit_collateral_path(collateral) %></td>
+      <td><%= link_to 'Destroy', collateral, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+    </tr>
+  <% end %>
   </tbody>
 </table>
 
