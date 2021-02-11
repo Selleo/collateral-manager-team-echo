@@ -2,35 +2,74 @@
 
 <h1>Collaterals</h1>
 
-<table>
-  <thead>
-  <tr>
-    <th>Name</th>
-    <th>Link</th>
-    <th>Kind</th>
-    <th>Tags</th>
-    <th colspan="3"></th>
-  </tr>
-  </thead>
-
-  <tbody>
-  <% @collaterals.each do |collateral| %>
+<div>
+  <table>
+    <thead>
     <tr>
-      <td><%= collateral.name %></td>
-      <td><%= collateral.link %></td>
-      <td><%= collateral.kind.titleize %></td>
-      <td><% collateral.tags.each do |tag| %>
-          <span class="badge bg-info text-dark"><%= tag.name %></span>
-        <%end %>
-          </td>
-      <td><%= link_to 'Show', collateral %></td>
-      <td><%= link_to 'Edit', edit_collateral_path(collateral) %></td>
-      <td><%= link_to 'Destroy', collateral, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      <th>Stack</th>
+      <th>Domain</th>
+      <th>Language</th>
+      <th>Country</th>
+      <th>Kind</th>
+      <th>Name</th>
+      <th colspan="6"></th>
     </tr>
-  <% end %>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+    <% @tag_filters.each do |item| %>
+      <td>
+        <% item[1].each do |n| %>
+          <div class="checkbox">
+            <%= check_box_tag "name[#{n}]", false %>
+            <%= label_tag "name[#{n}]", n.name %>
+            <div/>
+        <% end %>
+      </td>
+    <% end %>
+    <td>
+      <% @kinds.each do |n| %>
+        <div class="checkbox">
+          <%= check_box_tag "name[#{n}]", false %>
+          <%= label_tag "name[#{n}]", n[0].titleize %>
+        </div>
+      <% end %>
+    </td>
+    <td><input/></td>
+    <td> <%= button_to "Search", action: "new" %></td>
+    </tbody>
+  </table>
 
-<br>
 
-<%= link_to 'New Collateral', new_collateral_path %>
+  <table>
+    <thead>
+    <tr>
+      <th>Name</th>
+      <th>Link</th>
+      <th>Kind</th>
+      <th>Tags</th>
+      <th colspan="3"></th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <% @collaterals.each do |collateral| %>
+      <tr>
+        <td><%= collateral.name %></td>
+        <td><%= collateral.link %></td>
+        <td><%= collateral.kind.titleize %></td>
+        <td>
+          <% collateral.tags.each do |tag| %>
+            <span class="badge bg-info text-dark"><%= tag.name %></span>
+          <% end %>
+        </td>
+        <td><%= link_to 'Show', collateral %></td>
+        <td><%= link_to 'Edit', edit_collateral_path(collateral) %></td>
+        <td><%= link_to 'Destroy', collateral, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+</div>
+  <br>
+
+  <%= link_to 'New Collateral', new_collateral_path %>

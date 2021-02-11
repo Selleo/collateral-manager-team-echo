@@ -4,6 +4,16 @@ class CollateralsController < ApplicationController
   # GET /collaterals
   def index
     @collaterals = Collateral.includes(:tags).all
+    stack_tags = Tag.where(category: "stack").all.order(:name)
+    domain_tags = Tag.where(category: "domain").all.order(:name)
+    language_tags = Tag.where(category: "language").all.order(:name)
+    country_tags = Tag.where(category: "country").all.order(:name)
+    @kinds = Collateral.kinds.sort
+
+    @tag_filters = { stack_tags: stack_tags,
+                     domain_tags: domain_tags,
+                     language_tags: language_tags,
+                     country_tags: country_tags}
   end
 
   # GET /collaterals/1
