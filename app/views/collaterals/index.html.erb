@@ -18,9 +18,9 @@
     <tr>
       <td><%= collateral.name %></td>
       <td><%= collateral.link %></td>
-      <td><%= collateral.kind.titleize %></td>
+      <td><%= collateral.kind.humanize %></td>
       <td><% collateral.tags.each do |tag| %>
-          <span class="badge bg-info text-dark"><%= tag.name %></span>
+          <span class="badge bg-info text-dark"><%= tag.name.humanize %></span>
         <%end %>
           </td>
       <td><%= link_to 'Show', collateral %></td>
