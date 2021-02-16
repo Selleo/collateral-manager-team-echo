@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :leads
   resources :collaterals do
     get :tags
     post :assign_tags
