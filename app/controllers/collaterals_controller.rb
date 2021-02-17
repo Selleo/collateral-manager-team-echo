@@ -22,34 +22,39 @@ class CollateralsController < ApplicationController
   end
 
   def search
-    tag_params, text_param = {"search"=>{
+    tag_params = {"search"=>{
                                 "stack_tags"=>["", "1"],
                                 "domain_tags"=>["", "3"],
                                 "language_tags"=>["", "2"],
-                                "country_tags"=>["", "7"],
+                                "country_tags"=>["", ""],
                                 "kinds"=>["", "3", "9", "10"]
                                 },
-                                "search-text"=>"siema"}
+                  "search-text"=>" "}
+
+    # params cleaning
+    text_param = tag_params["search-text"]
+    tag_params = tag_params['search']
 
     tag_params.each do |key, val|
       val_clean = []
       val.each do |v|
-        val_clean << v.to_i if v>""
+        val_clean << v if v != ""
       end
       tag_params[key] = val_clean.join(',')
     end
-
-    @collaterals = Collateral.find_by_sql("SELECT DISTINCT collaterals.name FROM collaterals
+    # sql query generate
+    query = "SELECT DISTINCT collaterals.name FROM collaterals
                             INNER JOIN collaterals_tags
                             ON collaterals.id = collaterals_tags.collateral_id
                             INNER JOIN tags
                             ON collaterals_tags.tag_id = tags.id
-                            WHERE collaterals.name LIKE '%#{text_param}%' AND
-                            collaterals.kind IN (3, 2, 10) AND
-                            tags.id IN (#{tag_params["stack_tags"]}) AND
-                            tags.id IN (#{tag_params["domain_tags"]}) AND
-                            tags.id IN (#{tag_params["language_tags"]}) AND
-                            tags.id IN (#{tag_params["country_tags"]})")
+                            WHERE "
+    query += "collaterals.name LIKE '%#{text_param}%'" #if text_param.strip!.size > 0
+    tag_params.each do |key, val|
+      query += " AND tags.id IN (#{tag_params[key]})" if tag_params[key].size > 0
+    end
+
+    @collaterals = Collateral.find_by_sql(query)
 
     # Collateral.find_by_sql("SELECT DISTINCT collaterals.name FROM collaterals
     #                         INNER JOIN collaterals_tags
@@ -58,10 +63,11 @@ class CollateralsController < ApplicationController
     #                         ON collaterals_tags.tag_id = tags.id
     #                         WHERE collaterals.name LIKE '%uby%' AND
     #                         collaterals.kind IN (3, 2, 10) AND
-    #                         tags.id IN (0, 1) AND
-    #                         tags.id IN (0, 2) AND
-    #                         tags.id IN (0, 3) AND
-    #                         tags.id IN (0, 7)")
+    #                         tags.id IN (0) AND
+    #                         tags.id IN (2) AND
+    #                         tags.id IN (1, 3) AND
+    #                         tags.id IN (2, 7)")
+  end
 
     def search_best_for_lead
       @lead_tags = Lead.find(params[:id])
@@ -77,7 +83,7 @@ class CollateralsController < ApplicationController
       end
       search_result.sort.reverse
     end
-  end
+
 
   # GET /collaterals/new
   def new
