@@ -1,5 +1,9 @@
 Rails.application.routes.draw do
-  resources :leads
+  resources :leads do
+    get :tags
+    post :assign_tags
+    delete :deassign_tag
+  end
   resources :collaterals do
     get :tags
     post :assign_tags

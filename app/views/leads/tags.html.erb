@@ -1,0 +1,19 @@
+<h1>Tags for <%= @lead.name %></h1>
+<% colors = { stack: "#b5d6aa", domain: "#ed989a", language: "#fbca9f", country: "#ffe49e" } %>
+
+<div class="tags">
+  <% @lead.tags.each do |tag| %>
+    <div class="tag" style="background-color: <%= colors[tag['category'].to_sym] %>">
+      <%= button_to 'X', lead_deassign_tag_path, method: :delete,  class: 'tag__remove-btn', params: { tag: tag } %>
+      <%= tag['category'].titleize.downcase %>:<strong><%= tag['name'] %></strong>
+    </div>
+  <% end %>
+</div>
+<div>
+  <h3>Add tag:</h3>
+  <%= simple_form_for @tag_to_add, :url => lead_assign_tags_url do |f| %>
+    <%= f.input :category, collection: Tag.categories.to_a.map { |c| [c[0].titleize, c[0]] }, include_blank: false%>
+    <%= f.input :name %>
+    <%= f.button :submit %>
+  <% end %>
+</div>

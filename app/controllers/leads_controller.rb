@@ -1,9 +1,10 @@
 class LeadsController < ApplicationController
   before_action :set_lead, only: [:show, :edit, :update, :destroy]
+  before_action :authenticate_user!
 
   # GET /leads
   def index
-    @leads = Lead.all
+    @leads = Lead.includes(:tags).all
   end
 
   # GET /leads/1
@@ -15,6 +16,32 @@ class LeadsController < ApplicationController
     @lead = Lead.new
   end
 
+  def tags
+    @lead = Lead.includes(:tags).find params["lead_id"]
+    @tags = Tag.all
+    @tag_to_add = Tag.new
+  end
+
+  def assign_tags
+    tag_params = params['tag']
+    tag_to_assign = Tag.where(name: tag_params['name'].downcase, category: tag_params['category']).first_or_create
+    current_lead = Lead.includes(:tags).find params['lead_id']
+
+    unless current_lead.tags.include?(tag_to_assign)
+      current_lead.tags << tag_to_assign
+    end
+
+    redirect_to lead_tags_url
+  end
+
+  def deassign_tag
+    tag_to_remove = params['tag']
+    lead = Lead.includes(:tags).find params["lead_id"]
+    lead.tags = Lead.tags.where.not(id: tag_to_remove)
+
+    redirect_to lead_tags_url
+
+  end
   # GET /leads/1/edit
   def edit
   end
