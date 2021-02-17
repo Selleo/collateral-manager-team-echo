@@ -21,7 +21,6 @@ class TagsController < ApplicationController
 
   # POST /tags
   def create
-    binding.pry
     @tag = Tag.new(tag_params)
 
     if @tag.save

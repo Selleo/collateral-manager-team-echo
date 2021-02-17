@@ -3,41 +3,35 @@
 <h1>Collaterals</h1>
 
 <div>
-  <table>
-    <thead>
-    <tr>
-      <th>Stack</th>
-      <th>Domain</th>
-      <th>Language</th>
-      <th>Country</th>
-      <th>Kind</th>
-      <th>Name</th>
-      <th colspan="6"></th>
-    </tr>
-    </thead>
-    <tbody>
-    <% @tag_filters.each do |item| %>
-      <td>
-        <% item[1].each do |n| %>
-          <div class="checkbox">
-            <%= check_box_tag "name[#{n}]", false %>
-            <%= label_tag "name[#{n}]", n.name %>
-            <div/>
-        <% end %>
-      </td>
-    <% end %>
-    <td>
-      <% @kinds.each do |n| %>
-        <div class="checkbox">
-          <%= check_box_tag "name[#{n}]", false %>
-          <%= label_tag "name[#{n}]", n[0].titleize %>
-        </div>
+  <%= simple_form_for :search, url: search_collaterals_path, method: :get do |form| %>
+    <table>
+      <thead>
+      <tr>
+        <th>Stack</th>
+        <th>Domain</th>
+        <th>Language</th>
+        <th>Country</th>
+        <th>Kind</th>
+        <th>Name</th>
+        <th colspan="1"></th>
+      </tr>
+      </thead>
+      <tbody>
+
+      <% @tag_filters.each do |item| %>
+        <td>
+          <%= form.input item[0].to_s, required: false, as: :check_boxes, collection: item[1].map { |i| [i.name.humanize, i.id] }, include_blank: false, label: '' %>
+        </td>
       <% end %>
-    </td>
-    <td><input/></td>
-    <td> <%= button_to "Search", action: "new" %></td>
-    </tbody>
-  </table>
+      <td>
+        <%= form.input "kinds", required: false, as: :check_boxes, collection: @kinds.to_a.map { |kind| [kind[0].humanize, kind[1]] } ,label: ''%>
+      </td>
+      <td><input name="search-text"/>
+        <%= form.submit "Search" %>
+      </td>
+      </tbody>
+    </table>
+  <% end %>
 
 
   <table>
@@ -70,6 +64,6 @@
     </tbody>
   </table>
 </div>
-  <br>
+<br>
 
-  <%= link_to 'New Collateral', new_collateral_path %>
+<%= link_to 'New Collateral', new_collateral_path %>

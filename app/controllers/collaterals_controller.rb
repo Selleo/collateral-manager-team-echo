@@ -13,7 +13,7 @@ class CollateralsController < ApplicationController
     @tag_filters = { stack_tags: stack_tags,
                      domain_tags: domain_tags,
                      language_tags: language_tags,
-                     country_tags: country_tags}
+                     country_tags: country_tags }
   end
 
   # GET /collaterals/1
@@ -30,6 +30,10 @@ class CollateralsController < ApplicationController
     @collateral = Collateral.includes(:tags).find params["collateral_id"]
     @tags = Tag.all
     @tag_to_add = Tag.new
+  end
+
+  def search_collaterals
+    filters = params
   end
 
   def assign_tags
@@ -92,6 +96,6 @@ class CollateralsController < ApplicationController
 
   # Only allow a trusted parameter "white list" through.
   def collateral_params
-    params.require(:collateral).permit(:name, :link, :kind)
+    params.require(:collateral).permit(:name, :link, :kind, :search,:stack_tags, :domain_tags, :language_tags, :country_tags, :kinds)
   end
 end
