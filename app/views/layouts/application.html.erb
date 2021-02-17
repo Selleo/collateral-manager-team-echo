@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
   <%#
     Configure default and controller-, and view-specific titles in
     config/locales/en.yml. For more see:
@@ -13,10 +13,36 @@
   <%= csrf_meta_tags %>
 </head>
 <body>
-<%= link_to "Sign out", destroy_user_session_path, :method => :delete %>
-  <%= render "flashes" -%>
-  <%= yield %>
-  <%= render "javascript" %>
-  <%= render "css_overrides" %>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="<%= root_url %>">Our osom collateral tool</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0" style="width: 100%">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="<%= collaterals_url %>">Collaterals</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="<%= leads_url %>">Leads</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="<%= new_collateral_url %>">Add collateral</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="<%= new_lead_url %>">Add lead</a>
+        </li>
+        <li style="margin-left:auto">
+          <%= button_to "Sign out", destroy_user_session_path, :method => :delete, style: 'background-color:red' %>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<%= render "flashes" -%>
+<%= yield %>
+<%= render "javascript" %>
+<%= render "css_overrides" %>
 </body>
 </html>
