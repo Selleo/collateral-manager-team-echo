@@ -21,52 +21,72 @@ class CollateralsController < ApplicationController
     @collateral = Collateral.find(params[:id])
   end
 
-  def search
-    tag_params = {"search"=>{
-                                "stack_tags"=>["", "1"],
-                                "domain_tags"=>["", "3"],
-                                "language_tags"=>["", "2"],
-                                "country_tags"=>["", ""],
-                                "kinds"=>["", "3", "9", "10"]
-                                },
-                  "search-text"=>" "}
+  def search_collaterals
+    filters = params
+    # tag_params = {"search"=>{
+    #                             "stack_tags"=>["", "1"],
+    #                             "domain_tags"=>["", "3"],
+    #                             "language_tags"=>["", "2"],
+    #                             "country_tags"=>["", ""],
+    #
+    #                             "kinds"=>["", "3", "9", "10"]
+    #                             },
+    #               "search-text"=>" "}
 
     # params cleaning
-    text_param = tag_params["search-text"]
-    tag_params = tag_params['search']
+    text_param = filters["search-text"]
+    tag_params = filters['search']
+    collateral_kinds = tag_params.delete('kinds')
+    collateral_kinds = collateral_kinds.each.map(&:to_i)
+    collateral_kinds.delete(0)
 
-    tag_params.each do |key, val|
-      val_clean = []
-      val.each do |v|
-        val_clean << v if v != ""
+    # generate search_patterns
+    search_patterns = []
+    args = []
+    tag_params.each_value { |x| args << x.each.map(&:to_i)}
+    args.each do |a|
+      a.delete(0)
+    end
+    args.delete([])
+
+    #args = [[1,2,3],[4,5]]
+    args.pop.each { |x| search_patterns << [x] }
+    if args.size > 0
+      size = args.size
+      size.times do |x|
+        search_patterns = search_patterns.product(args.pop)
       end
-      tag_params[key] = val_clean.join(',')
-    end
-    # sql query generate
-    query = "SELECT DISTINCT collaterals.name FROM collaterals
-                            INNER JOIN collaterals_tags
-                            ON collaterals.id = collaterals_tags.collateral_id
-                            INNER JOIN tags
-                            ON collaterals_tags.tag_id = tags.id
-                            WHERE "
-    query += "collaterals.name LIKE '%#{text_param}%'" #if text_param.strip!.size > 0
-    tag_params.each do |key, val|
-      query += " AND tags.id IN (#{tag_params[key]})" if tag_params[key].size > 0
+      search_patterns.each {|x| x.flatten!}
     end
 
-    @collaterals = Collateral.find_by_sql(query)
+    # search collaterals with search_patterns
+    found_collaterals_ids = []
+    Collateral.all.each do |cl|
+      collateral_tags = []
+      cl.tags.each do |t|
+        collateral_tags << t.id
+      end
+      search_patterns.each do |s|
+        if collateral_tags.to_set > s.to_set
+          found_collaterals_ids << cl.id
+        end
+      end
+    end
 
-    # Collateral.find_by_sql("SELECT DISTINCT collaterals.name FROM collaterals
-    #                         INNER JOIN collaterals_tags
-    #                         ON collaterals.id = collaterals_tags.collateral_id
-    #                         INNER JOIN tags
-    #                         ON collaterals_tags.tag_id = tags.id
-    #                         WHERE collaterals.name LIKE '%uby%' AND
-    #                         collaterals.kind IN (3, 2, 10) AND
-    #                         tags.id IN (0) AND
-    #                         tags.id IN (2) AND
-    #                         tags.id IN (1, 3) AND
-    #                         tags.id IN (2, 7)")
+    @collaterals = Collateral.find(found_collaterals_ids)
+
+    stack_tags = Tag.where(category: "stack").all.order(:name)
+    domain_tags = Tag.where(category: "domain").all.order(:name)
+    language_tags = Tag.where(category: "language").all.order(:name)
+    country_tags = Tag.where(category: "country").all.order(:name)
+    @kinds = Collateral.kinds.sort
+
+    @tag_filters = { stack_tags: stack_tags,
+                     domain_tags: domain_tags,
+                     language_tags: language_tags,
+                     country_tags: country_tags }
+    render :index
+
   end
 
     def search_best_for_lead
@@ -97,9 +117,6 @@ class CollateralsController < ApplicationController
     @tag_to_add = Tag.new
   end
 
-  def search_collaterals
-    filters = params
-  end
 
   def assign_tags
     tag_params = params['tag']
