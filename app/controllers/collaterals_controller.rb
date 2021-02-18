@@ -80,9 +80,9 @@ class CollateralsController < ApplicationController
     search_result = []
     Collateral.all.each do |x|
       wagged = 0
-      x.tags.each do |y|
+      x.tag_assignments.each do |y|
         @lead_tags.each do |z|
-          wagged += z.weight * y.weight if z.name == y.name
+          wagged += z.weight * y.weight if z.tag_id == y.tag_id
         end
       end
       search_result << [x.id, wagged]
