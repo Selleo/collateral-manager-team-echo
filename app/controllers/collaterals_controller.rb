@@ -96,16 +96,15 @@ class CollateralsController < ApplicationController
   def tags
     @collateral = Collateral.includes(:tags).find params["collateral_id"]
     @tags = Tag.all
-    @tag_to_add = Tag.new
   end
 
   def assign_tags
-    tag_params = params['tag']
+    tag_params = params['new_tag']
     tag_to_assign = Tag.where(name: tag_params['name'].downcase, category: tag_params['category']).first_or_create
     current_collateral = Collateral.includes(:tags).find params['collateral_id']
 
     unless current_collateral.tags.include?(tag_to_assign)
-      current_collateral.tags << tag_to_assign
+      TagAssignment.assign(tag_to_assign,current_collateral, tag_params['weight'].to_f)
     end
 
     redirect_to collateral_tags_url

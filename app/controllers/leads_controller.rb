@@ -19,16 +19,15 @@ class LeadsController < ApplicationController
   def tags
     @lead = Lead.includes(:tags).find params["lead_id"]
     @tags = Tag.all
-    @tag_to_add = Tag.new
   end
 
   def assign_tags
-    tag_params = params['tag']
+    tag_params = params['new_tag']
     tag_to_assign = Tag.where(name: tag_params['name'].downcase, category: tag_params['category']).first_or_create
     current_lead = Lead.includes(:tags).find params['lead_id']
 
     unless current_lead.tags.include?(tag_to_assign)
-      current_lead.tags << tag_to_assign
+      TagAssignment.assign(tag_to_assign,current_lead, tag_params['weight'].to_f)
     end
 
     redirect_to lead_tags_url
