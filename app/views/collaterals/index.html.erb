@@ -10,7 +10,6 @@
         <th>Language</th>
         <th>Country</th>
         <th>Kind</th>
-        <th>Name</th>
         <th colspan="1"></th>
       </tr>
       </thead>
@@ -22,9 +21,9 @@
         </td>
       <% end %>
       <td>
-        <%= form.input "kinds", required: false, as: :check_boxes, collection: @kinds.to_a.map { |kind| [kind[0].humanize, kind[1]] } ,label: ''%>
+        <%= form.input "kinds", required: false, as: :check_boxes, collection: @kinds.to_a.map { |kind| [kind[0].humanize, kind[1]] }, label: '' %>
       </td>
-      <td><input name="search-text"/>
+      <td>
         <%= form.submit "Search" %>
       </td>
       </tbody>
@@ -43,25 +42,22 @@
     </tr>
     </thead>
 
-  <tbody>
-  <% @collaterals.each do |collateral| %>
-    <tr>
-      <td><%= collateral.name %></td>
-      <td><%= collateral.link %></td>
-      <td><%= collateral.kind.humanize %></td>
-      <td>
-        <% collateral.tags.each do |tag| %>
-          <span class="badge bg-info text-dark"><%= tag.category.downcase %>:<%= tag.name.humanize %></span>
-        <%end %>
-      </td>
-      <td><%= link_to 'Show', collateral %></td>
-      <td><%= link_to 'Edit', edit_collateral_path(collateral) %></td>
-      <td><%= link_to 'Destroy', collateral, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-    </tr>
-  <% end %>
-  </tbody>
-</table>
-
-<br>
-
-<%= link_to 'New Collateral', new_collateral_path %>
+    <tbody>
+    <% @collaterals.each do |collateral| %>
+      <tr>
+        <td><%= collateral.name %></td>
+        <td><%= collateral.link %></td>
+        <td><%= collateral.kind.humanize %></td>
+        <td>
+          <% collateral.tags.each do |tag| %>
+            <span class="badge bg-info text-dark"><%= tag.category.downcase %>:<%= tag.name.humanize %></span>
+          <% end %>
+        </td>
+        <td><%= link_to 'Show', collateral %></td>
+        <td><%= link_to 'Edit', edit_collateral_path(collateral) %></td>
+        <td><%= link_to 'Destroy', collateral, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+</div>
