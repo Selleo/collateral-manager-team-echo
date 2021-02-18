@@ -23,13 +23,13 @@ class CollateralsController < ApplicationController
 
   def search_collaterals
     filters = params
-    # tag_params = {"search"=>{
-    #                             "stack_tags"=>["", "1"],
-    #                             "domain_tags"=>["", "3"],
-    #                             "language_tags"=>["", "2"],
+    # fiters = {"search"=>{
+    #                             "stack_tags"=>["0", "1", "3"],
+    #                             "domain_tags"=>["", ""],
+    #                             "language_tags"=>["", ""],
     #                             "country_tags"=>["", ""],
     #
-    #                             "kinds"=>["", "3", "9", "10"]
+    #                             "kinds"=>["1", "3", "9", "10"]
     #                             },
     #               "search-text"=>" "}
 
@@ -44,38 +44,56 @@ class CollateralsController < ApplicationController
     search_patterns = []
     args = []
     tag_params.each_value { |x| args << x.each.map(&:to_i)}
+
     args.each do |a|
       a.delete(0)
     end
     args.delete([])
 
-    #args = [[1,2,3],[4,5]]
-    args.pop.each { |x| search_patterns << [x] }
-    if args.size > 0
-      size = args.size
-      size.times do |x|
-        search_patterns = search_patterns.product(args.pop)
-      end
-      search_patterns.each {|x| x.flatten!}
-    end
 
-    # search collaterals with search_patterns
-    found_collaterals_ids = []
-    Collateral.all.each do |cl|
-      collateral_tags = []
-      cl.tags.each do |t|
-        collateral_tags << t.id
+    # args = [[1,2,7],[4,5]]
+    if args.size >0
+      args.pop.each { |x| search_patterns << [x] }
+      if args.size > 0
+        size = args.size
+        size.times do |x|
+          search_patterns = search_patterns.product(args.pop)
+        end
+        search_patterns.each {|x| x.flatten!}
       end
-      search_patterns.each do |s|
-        if collateral_tags.to_set > s.to_set
-          found_collaterals_ids << cl.id
+    end
+    @col_tags =[]
+    @col_tags<<Collateral.all[1].tags
+
+
+      # search collaterals with search_patterns
+      found_collaterals_ids = []
+      Collateral.all.each do |cl|
+        cl_tags = []
+        collat_tags = cl.tags
+        collat_tags.each do |t|
+          cl_tags << t.id
+        end
+
+        search_patterns.each do |s|
+          if cl_tags.to_set >= s.to_set
+            found_collaterals_ids << cl.id
+          end
         end
       end
+    found_collaterals_ids = found_collaterals_ids.to_set
+    @msg = search_patterns, found_collaterals_ids
+
+    if collateral_kinds.empty?
+    @collaterals = Collateral.where(id: found_collaterals_ids)
+    elsif args.empty?
+    @collaterals = Collateral.where(kind: collateral_kinds)
+    else
+    @collaterals = Collateral.where(id: found_collaterals_ids).where(kind: collateral_kinds)
     end
 
-    @collaterals = Collateral.find(found_collaterals_ids)
 
-    stack_tags = Tag.where(category: "stack").all.order(:name)
+  stack_tags = Tag.where(category: "stack").all.order(:name)
     domain_tags = Tag.where(category: "domain").all.order(:name)
     language_tags = Tag.where(category: "language").all.order(:name)
     country_tags = Tag.where(category: "country").all.order(:name)
@@ -86,7 +104,6 @@ class CollateralsController < ApplicationController
                      language_tags: language_tags,
                      country_tags: country_tags }
     render :index
-
   end
 
     def search_best_for_lead
