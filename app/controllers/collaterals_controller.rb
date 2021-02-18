@@ -8,7 +8,8 @@ class CollateralsController < ApplicationController
     language_tags = Tag.where(category: "language").all.order(:name)
     country_tags = Tag.where(category: "country").all.order(:name)
     @kinds = Collateral.kinds.sort
-
+    @selected_tags = {}
+    @selected_kinds = []
     @tag_filters = { stack_tags: stack_tags,
                      domain_tags: domain_tags,
                      language_tags: language_tags,
@@ -22,7 +23,6 @@ class CollateralsController < ApplicationController
 
   def search_collaterals
     filters = params
-
     # params cleaning
     tag_params = filters['search']
 
@@ -32,9 +32,9 @@ class CollateralsController < ApplicationController
       v
     end
     tag_params.delete_if { |_, v| v.blank? }
+    @selected_tags = tag_params
 
     collateral_kinds = tag_params.delete('kinds')
-
     # generate search_patterns
     search_patterns = []
     args = []
@@ -42,9 +42,6 @@ class CollateralsController < ApplicationController
     args = tag_params.values
     search_patterns, rest = Array.wrap(args[0]), Array.wrap(args[1..-1])
     search_patterns = search_patterns.product(*rest)
-
-    @col_tags = []
-    @col_tags << Collateral.all[1].tags
 
     # search collaterals with search_patterns
     found_collaterals_ids = []
@@ -61,7 +58,7 @@ class CollateralsController < ApplicationController
     else
       @collaterals = Collateral.where(id: found_collaterals_ids).where(kind: collateral_kinds)
     end
-
+    @selected_kinds = collateral_kinds.blank? ? [] : collateral_kinds
     stack_tags = Tag.where(category: "stack").all.order(:name)
     domain_tags = Tag.where(category: "domain").all.order(:name)
     language_tags = Tag.where(category: "language").all.order(:name)
