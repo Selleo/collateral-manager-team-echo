@@ -72,20 +72,8 @@ class CollateralsController < ApplicationController
     render :index
   end
 
-  def search_best_for_lead
-    @lead_tags = Lead.find(params[:id])
-    search_result = []
-    Collateral.all.each do |x|
-      wagged = 0
-      x.tag_assignments.each do |y|
-        @lead_tags.each do |z|
-          wagged += z.weight * y.weight if z.tag_id == y.tag_id
-        end
-      end
-      search_result << [x.id, wagged]
-    end
-    search_result.sort.reverse
-  end
+
+
 
   # GET /collaterals/new
   def new

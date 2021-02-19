@@ -2,6 +2,7 @@ class LeadsController < ApplicationController
   before_action :set_lead, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!
 
+  BEST_COLLATERALS_FOR_LEAD_NUMBER = 10
   # GET /leads
   def index
     @leads = Lead.includes(:tags).all
@@ -9,6 +10,13 @@ class LeadsController < ApplicationController
 
   # GET /leads/1
   def show
+    @collaterals = []
+    @colls = []
+    @collaterals = search_best_for_lead.take(BEST_COLLATERALS_FOR_LEAD_NUMBER)
+    @collaterals = search_best_for_lead.each do |c|
+      @colls << c.pop
+    end
+    @collaterals.flatten!
   end
 
   # GET /leads/new
@@ -27,7 +35,7 @@ class LeadsController < ApplicationController
     current_lead = Lead.includes(:tags).find params['lead_id']
 
     unless current_lead.tags.include?(tag_to_assign)
-      TagAssignment.assign(tag_to_assign,current_lead, tag_params['weight'].to_f)
+      TagAssignment.assign(tag_to_assign, current_lead, tag_params['weight'].to_f)
     end
 
     redirect_to lead_tags_url
@@ -41,6 +49,7 @@ class LeadsController < ApplicationController
     redirect_to lead_tags_url
 
   end
+
   # GET /leads/1/edit
   def edit
   end
@@ -72,13 +81,14 @@ class LeadsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_lead
-      @lead = Lead.find(params[:id])
-    end
 
-    # Only allow a trusted parameter "white list" through.
-    def lead_params
-      params.require(:lead).permit(:name, :description)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_lead
+    @lead = Lead.find(params[:id])
+  end
+
+  # Only allow a trusted parameter "white list" through.
+  def lead_params
+    params.require(:lead).permit(:name, :description)
+  end
 end

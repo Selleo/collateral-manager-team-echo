@@ -13,6 +13,6 @@ Tag.create! name: 'rails', category: 0
 Tag.create! name: 'recruitment', category: 1
 collateral = Collateral.create! name: 'Ruby is awesome!', link: 'http://blog.selleo.com/ruby-roxxx', kind: 2
 Tag.all.each do |tag|
-  TagAssignment.assign(tag, collateral)
+  TagAssignment.assign(tag, collateral,1)
 end
 
